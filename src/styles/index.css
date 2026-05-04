@@ -1,0 +1,25 @@
+@import './fonts.css';
+@import './tailwind.css';
+@import './theme.css';
+
+/* Morse Code Decoder Animations */
+
+.glow-path, .glow-node {
+  transition: all 0.3s ease-in-out;
+}
+
+@keyframes pulseEnergy {
+  0% {
+    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(239, 68, 68, 1)) drop-shadow(0 0 5px rgba(239, 68, 68, 0.8));
+  }
+  100% {
+    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.6));
+  }
+}
+
+.animate-pulse-energy {
+  animation: pulseEnergy 1.5s infinite ease-in-out;
+}
