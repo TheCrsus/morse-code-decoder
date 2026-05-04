@@ -93,9 +93,9 @@ export default function App() {
       </header>
 
       {/* Main Layout */}
-      <main className="flex-1 w-full mx-auto p-3 sm:p-6 grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-4 sm:gap-6 max-w-[2000px]">
+      <main className="flex-1 w-full mx-auto p-3 sm:p-6 flex flex-col xl:grid xl:grid-cols-[1.5fr_1fr] gap-4 sm:gap-6 max-w-[2000px] pb-32 xl:pb-6">
         {/* Left Side: Decoder */}
-        <div className="w-full flex flex-col min-h-[500px] xl:h-[calc(100vh-120px)]">
+        <div className="w-full flex flex-col xl:h-[calc(100vh-120px)]">
           <DecoderComponent onSaveChar={handleSaveChar} onAddSpace={handleAddSpace} />
         </div>
         
@@ -171,6 +171,9 @@ function DecoderComponent({ onSaveChar, onAddSpace }: { onSaveChar: (c: string) 
   const handleInput = (type: 'dit' | 'dah') => {
     if (sequence.length < 4) {
       playBeep(type);
+      if (window.navigator && window.navigator.vibrate) {
+        window.navigator.vibrate(50);
+      }
       setSequence(prev => [...prev, type]);
     }
   };
@@ -224,7 +227,7 @@ function DecoderComponent({ onSaveChar, onAddSpace }: { onSaveChar: (c: string) 
   return (
     <div className="h-full relative border border-zinc-800 rounded-2xl bg-[#0a0b0e] shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col select-none">
       {/* Tactical Header */}
-      <div className="relative px-4 sm:px-6 py-4 border-b border-zinc-800/80 flex flex-wrap items-center justify-between bg-[#0e1015] z-10 gap-4">
+      <div className="sticky top-0 sm:relative px-4 sm:px-6 py-4 border-b border-zinc-800/80 flex flex-wrap items-center justify-between bg-[#0e1015] z-30 gap-4 shadow-md sm:shadow-none">
         <div className="flex items-center gap-4">
           <div className="p-2.5 bg-red-500/10 rounded-md border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.15)]">
             <Binary className="w-5 h-5 text-red-500" />
@@ -259,10 +262,10 @@ function DecoderComponent({ onSaveChar, onAddSpace }: { onSaveChar: (c: string) 
       </div>
 
       {/* Main Board Area */}
-      <div className="flex-1 relative w-full overflow-x-auto overflow-y-hidden [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-[#070709] [&::-webkit-scrollbar-thumb]:bg-zinc-800 [&::-webkit-scrollbar-thumb]:rounded-full">
+      <div className="flex-1 relative w-full overflow-x-auto overflow-y-hidden touch-pan-x [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-[#070709] [&::-webkit-scrollbar-thumb]:bg-zinc-800 [&::-webkit-scrollbar-thumb]:rounded-full flex justify-start sm:justify-center">
         {/* Board Background Details */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
-        <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '100px 100px' }} />
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none min-w-[1000px] sm:min-w-0" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+        <div className="absolute inset-0 opacity-[0.02] pointer-events-none min-w-[1000px] sm:min-w-0" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)', backgroundSize: '100px 100px' }} />
         
         {/* Tactical HUD Overlays */}
         <div className="absolute top-6 left-6 text-[10px] text-zinc-600 tracking-[0.2em] hidden lg:block pointer-events-none leading-relaxed">
@@ -303,8 +306,8 @@ function DecoderComponent({ onSaveChar, onAddSpace }: { onSaveChar: (c: string) 
         </div>
 
         {/* Circuit Diagram Container */}
-        <div className="relative flex-1 w-full min-h-[400px] sm:min-h-[500px] flex items-center justify-center p-2 sm:p-8">
-          <div className="relative w-[800px] sm:w-full min-w-[800px] max-w-[1200px] aspect-[3/2]">
+        <div className="relative flex-none w-[900px] sm:w-full min-h-[400px] sm:min-h-[500px] flex items-center justify-center p-4 sm:p-8 shrink-0">
+          <div className="relative w-full max-w-[1200px] aspect-[3/2]">
             {/* SVG Connecting Traces */}
             <svg viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`} className="absolute inset-0 w-full h-full pointer-events-none">
               {nodes.filter(n => n.parent).map(node => {
@@ -358,7 +361,7 @@ function DecoderComponent({ onSaveChar, onAddSpace }: { onSaveChar: (c: string) 
                   <NodeShape type={node.type} active={isActive} />
                   {node.label !== 'START' && (
                     <span 
-                      className={`absolute top-full mt-2.5 text-[9px] sm:text-[11px] font-bold tracking-widest ${
+                      className={`absolute top-full mt-2.5 text-[8px] sm:text-[11px] font-bold tracking-widest ${
                         isActive 
                           ? 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,1)]' 
                           : 'text-zinc-500'
@@ -386,11 +389,11 @@ function DecoderComponent({ onSaveChar, onAddSpace }: { onSaveChar: (c: string) 
       </div>
       
       {/* Interactive Controls */}
-      <div className="relative px-3 sm:px-6 py-4 border-t border-zinc-800/80 flex flex-wrap items-center justify-center bg-[#0e1015] z-10 gap-2 sm:gap-3">
+      <div className="fixed bottom-0 left-0 w-full xl:relative xl:bottom-auto xl:left-auto px-3 sm:px-6 py-4 border-t border-zinc-800/80 flex flex-wrap items-center justify-center bg-[#0e1015] z-50 gap-2 sm:gap-3 shadow-[0_-20px_50px_rgba(0,0,0,0.8)] xl:shadow-none pb-[env(safe-area-inset-bottom,1rem)] xl:pb-4">
         <button
           onClick={() => handleInput('dit')}
           disabled={sequence.length >= 4}
-          className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-3 sm:px-5 py-3 sm:py-2.5 min-h-[48px] bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed border border-zinc-700 rounded shadow-md transition-all active:scale-95"
+          className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-3 sm:px-5 py-3 sm:py-2.5 min-h-[60px] sm:min-h-[48px] bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed border border-zinc-700 rounded shadow-md transition-all active:scale-95 touch-manipulation"
         >
           <div className="w-3 h-3 rounded-full bg-zinc-300" />
           <span className="font-bold tracking-widest text-zinc-300 text-xs sm:text-sm">DOT</span>
@@ -399,7 +402,7 @@ function DecoderComponent({ onSaveChar, onAddSpace }: { onSaveChar: (c: string) 
         <button
           onClick={() => handleInput('dah')}
           disabled={sequence.length >= 4}
-          className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-3 sm:px-5 py-3 sm:py-2.5 min-h-[48px] bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed border border-zinc-700 rounded shadow-md transition-all active:scale-95"
+          className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-3 sm:px-5 py-3 sm:py-2.5 min-h-[60px] sm:min-h-[48px] bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed border border-zinc-700 rounded shadow-md transition-all active:scale-95 touch-manipulation"
         >
           <div className="w-5 h-3 rounded-sm bg-zinc-300" />
           <span className="font-bold tracking-widest text-zinc-300 text-xs sm:text-sm">DASH</span>
@@ -410,7 +413,7 @@ function DecoderComponent({ onSaveChar, onAddSpace }: { onSaveChar: (c: string) 
         <button
           onClick={handleSave}
           disabled={targetChar === 'NONE'}
-          className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-3 sm:px-5 py-3 sm:py-2.5 min-h-[48px] bg-emerald-950/30 hover:bg-emerald-900/40 disabled:opacity-50 disabled:cursor-not-allowed text-emerald-400 border border-emerald-900/50 rounded shadow-md transition-all active:scale-95"
+          className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-3 sm:px-5 py-3 sm:py-2.5 min-h-[60px] sm:min-h-[48px] bg-emerald-950/30 hover:bg-emerald-900/40 disabled:opacity-50 disabled:cursor-not-allowed text-emerald-400 border border-emerald-900/50 rounded shadow-md transition-all active:scale-95 touch-manipulation"
           title="Save Letter (Enter)"
         >
           <CornerDownLeft className="w-4 h-4" />
@@ -419,7 +422,7 @@ function DecoderComponent({ onSaveChar, onAddSpace }: { onSaveChar: (c: string) 
 
         <button
           onClick={handleSpace}
-          className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-3 sm:px-5 py-3 sm:py-2.5 min-h-[48px] bg-blue-950/30 hover:bg-blue-900/40 text-blue-400 border border-blue-900/50 rounded shadow-md transition-all active:scale-95"
+          className="flex-1 sm:flex-none flex justify-center items-center gap-2 px-3 sm:px-5 py-3 sm:py-2.5 min-h-[60px] sm:min-h-[48px] bg-blue-950/30 hover:bg-blue-900/40 text-blue-400 border border-blue-900/50 rounded shadow-md transition-all active:scale-95 touch-manipulation"
           title="Add Space (Spacebar)"
         >
           <SpaceIcon className="w-4 h-4" />
@@ -430,7 +433,7 @@ function DecoderComponent({ onSaveChar, onAddSpace }: { onSaveChar: (c: string) 
 
         <button
           onClick={handleReset}
-          className="w-full sm:w-auto flex justify-center items-center gap-2 px-4 py-3 sm:py-2.5 min-h-[48px] bg-red-950/30 hover:bg-red-900/40 text-red-400 border border-red-900/50 rounded shadow-md transition-all active:scale-95 mt-1 sm:mt-0"
+          className="w-full sm:w-auto flex justify-center items-center gap-2 px-4 py-3 sm:py-2.5 min-h-[60px] sm:min-h-[48px] bg-red-950/30 hover:bg-red-900/40 text-red-400 border border-red-900/50 rounded shadow-md transition-all active:scale-95 mt-1 sm:mt-0 touch-manipulation"
           title="Reset Sequence (Esc)"
         >
           <RotateCcw className="w-4 h-4" />
